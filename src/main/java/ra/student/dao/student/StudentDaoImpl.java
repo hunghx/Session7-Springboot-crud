@@ -1,116 +1,86 @@
 package ra.student.dao.student;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ra.student.model.Student;
-import ra.student.util.ConnectDB;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
+
 @Repository
 public class StudentDaoImpl implements IStudentDao{
     @Autowired
-    private ConnectDB connectDB;
+    private SessionFactory sessionFactory;
+    @Autowired
+    private EntityManager entityManager;
     @Override
     public List<Student> findAll() {
-        List<Student> list = new ArrayList<>();
-        Connection conn = connectDB.getConnection();
-        try {
-            CallableStatement callSt = conn.prepareCall("select * from student");
-            ResultSet rs = callSt.executeQuery();
-            while (rs.next()){
-                Student student =new Student();
-                student.setStudentId(rs.getInt("student_id"));
-                student.setStudentName(rs.getString("student_name"));
-                student.setPhoneNumber(rs.getString("phone_number"));
-                student.setSex(rs.getBoolean("sex"));
-                student.setBirthday(rs.getDate("birthday"));
-                student.setAddress(rs.getString("address"));
-                student.setImageUrl(rs.getString("image_url"));
-                list.add(student);
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }finally {
-            connectDB.closeConnection(conn);
-        }
-
+        // sử dụng ngôn ngu HQL
+        TypedQuery<Student> query = entityManager.createQuery("select S from Student S", Student.class);
+        return query.getResultList();
     }
 
     @Override
     public Student findById(Integer id) {
-        Student student = null;
-        Connection conn = connectDB.getConnection();
-        try {
-            CallableStatement callSt = conn.prepareCall("select * from student where student_id=?");
-            callSt.setInt(1,id);
-            ResultSet rs = callSt.executeQuery();
-            if (rs.next()){
-                student =new Student();
-                student.setStudentId(rs.getInt("student_id"));
-                student.setStudentName(rs.getString("student_name"));
-                student.setPhoneNumber(rs.getString("phone_number"));
-                student.setSex(rs.getBoolean("sex"));
-                student.setBirthday(rs.getDate("birthday"));
-                student.setAddress(rs.getString("address"));
-                student.setImageUrl(rs.getString("image_url"));
-            }
-            return student;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }finally {
-            connectDB.closeConnection(conn);
-        }
+        TypedQuery<Student> query = entityManager.createQuery("select S from Student S where S.studentId = :idfind", Student.class);
+        // truyền dối số vào
+        query.setParameter("idfind",id);
+        return query.getSingleResult();
     }
 
     @Override
     public boolean save(Student student) {
-        Connection conn = connectDB.getConnection();
-        CallableStatement callSt = null;
-        try {
-            if (student.getStudentId()==null){
-                // thêm mới
-                callSt = conn.prepareCall("insert into student(student_name, phone_number, sex, birthday, address, image_url) value (?,?,?,?,?,?)");
-                callSt.setString(1,student.getStudentName());
-                callSt.setString(2,student.getPhoneNumber());
-                callSt.setBoolean(3,student.getSex());
-                callSt.setDate(4,new Date(student.getBirthday().getTime())); // chú ý chuển đổi
-                callSt.setString(5,student.getAddress());
-                callSt.setString(6,student.getImageUrl());
-            }else {
-                // cập nhật
-                callSt = conn.prepareCall("update  student set student_name=?, phone_number=?, sex=?, birthday=?, address=?, image_url=? where student_id =?");
-                callSt.setString(1,student.getStudentName());
-                callSt.setString(2,student.getPhoneNumber());
-                callSt.setBoolean(3,student.getSex());
-                callSt.setDate(4,new Date(student.getBirthday().getTime())); // chú ý chuển đổi
-                callSt.setString(5,student.getAddress());
-                callSt.setString(6,student.getImageUrl());
-                callSt.setInt(7,student.getStudentId());
-            }
-            int count =callSt.executeUpdate();
-            return count>0;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }finally {
-            connectDB.closeConnection(conn);
+        // tạo 1 session
+        Session session = sessionFactory.openSession();
+//        Transaction transaction= session.beginTransaction(); // bắt đầu giao dich
+//        try{
+//            session.saveOrUpdate(student);
+//            transaction.commit(); // xác nhận cam kết để cap nhật trong db
+//            return true;
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return false;
+//        }finally {
+//            if (session!=null){
+//                session.close();
+//            }
+//        }
+        if (student.getStudentId()==null){
+            // thêm mới
+            session.saveOrUpdate(student);
+        }else {
+//            cập nhật
+            Student old = findById(student.getStudentId()); // lấy ra đối tươg cũ
+            old.copy(student); // thay đổi giá trị
+            session.saveOrUpdate(old);
         }
+        session.close();
+        return true;
     }
 
     @Override
     public boolean deleteById(Integer id) {
-        Connection conn = connectDB.getConnection();
-        try {
-            CallableStatement callSt = conn.prepareCall("DELETE  from student where student_id=?");
-            callSt.setInt(1,id);
-            int count = callSt.executeUpdate();
-            return count>0;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }finally {
-            connectDB.closeConnection(conn);
-        }
+        // tạo 1 session
+        Session session = sessionFactory.openSession();
+//        Transaction transaction= session.beginTransaction(); // bắt đầu giao dich
+//        try{
+//            session.delete(findById(id));
+//            transaction.commit(); // xác nhận cam kết để cap nhật trong db
+//            return true;
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return false;
+//        }finally {
+//            if (session!=null){
+//                session.close();
+//            }
+//        }
+        session.delete(findById(id));
+        session.close();
+        return true;
     }
 }
