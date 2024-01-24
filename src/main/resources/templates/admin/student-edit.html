@@ -246,71 +246,52 @@
 
         <main class="content">
             <div class="container-fluid p-0">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Demo Product Table</h3>
-                        <nav class="navbar navbar-expand-lg bg-light">
-                            <div class="container-fluid">
-                                <a class="navbar-brand" href="#">
-                                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                            data-bs-target="#addModal">+ Add new Product
-                                    </button>
-                                </a>
-                                <form class="d-flex" role="search">
-                                    <input class="form-control me-2 fst-italic" type="search"
-                                           placeholder="Enter product's name... "
-                                           aria-label="Search">
-                                    <button class="btn btn-outline-success" type="submit">Search</button>
-                                </form>
-                            </div>
-                        </nav>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped text-center">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Image</th>
-                                <th>Date Of Birth</th>
-                                <th>Sex</th>
-                                <th>PhoneNumber</th>
-                                <th>Address</th>
-                                <th colspan="2">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody th:each="stu: ${students}">
-                            <tr>
-                                <td th:text="${stu.studentId}"></td>
-                                <td th:text="${stu.studentName}"></td>
-                                <td><img th:src="${stu.imageUrl}" alt="#" style="object-fit: cover" width="200"
-                                         height="300"></td>
-                                <td th:text="${stu.birthday}"></td>
-                                <td th:text="${stu.sex?'Nam':'Nữ'}"></td>
-                                <td th:text="${stu.phoneNumber}"></td>
-                                <td th:text="${stu.address}"></td>
-                                <td><a href="" class="btn btn-warning">EDIT</a></td>
-                                <td><a th:href="|/admin/student/delete?id=${stu.studentId}|" onclick="return confirm('bạn có chắc chắn muốn xóa không ?')" class="btn btn-danger">DELETE</a></td>
-                            </tr>
-                            </tbody>
+                <div class="card p-5">
+                    <form action="/admin/student/update" method="post" enctype="multipart/form-data" th:object="${student}">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5">Edit New Product</h1>
+                        </div>
+                        <hr>
+                        <div class="modal-body p-3">
 
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                    <nav aria-label="Page navigation example ">
-                        <ul class="pagination float-end mx-4">
-                            <li class="page-item disabled">
-                                <a class="page-link">Previous</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
+                            <div class="mb-3">
+                                <label class="form-label">Student Id</label>
+                                <input type="text" class="form-control" th:field="*{studentId}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Student Name</label>
+                                <input type="text" class="form-control" th:field="*{studentName}">
+                            </div>
+                            <div class="mb-3">
+                                <label  class="form-label">Student Image</label>
+                                <img th:src="${student.imageUrl}" th:alt="${student.studentName}" width="200" height="300" style="object-fit: cover">
+                                <input type="file" class="form-control" name="file">
+                            </div>
+                            <div class="mb-3">
+                                <label  class="form-label">PhoneNumber</label>
+                                <input type="text" class="form-control" th:field="*{phoneNumber}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" th:field="*{address}">
+                            </div>
+                            <div class="mb-3">
+                                <label  class="form-label">Sex</label>
+                                <select class="form-label" th:field="*{sex}">
+                                    <option value="true">Nam</option>
+                                    <option value="false">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label  class="form-label">Date of Birth</label>
+                                <input type="date" class="form-label" th:field="*{birthday}">
+                            </div>
+
+                        </div>
+                        <div class="textt-center">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
@@ -347,111 +328,6 @@
     </div>
 </div>
 <!-- Modal Add -->
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="/admin/student/add" method="post" enctype="multipart/form-data">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">Add New Product</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                    <div class="mb-3">
-                        <label for="product_name" class="form-label">Student Name</label>
-                        <input type="text" class="form-control" name="studentName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="product_image" class="form-label">Student Image</label>
-                        <input type="file" class="form-control" name="file" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">PhoneNumber</label>
-                        <input type="text" class="form-control" name="phoneNumber" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="product_price" class="form-label">Address</label>
-                        <input type="text" class="form-control" name="address" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="product_status" class="form-label">Sex</label>
-                        <select class="form-label" name="sex">
-                            <option value="true">Nam</option>
-                            <option value="false">Nữ</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Date of Birth</label>
-                        <input type="date" class="form-label" name="birthday" required>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" >ADD</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Product</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="product_id" class="form-label">Product ID</label>
-                        <input type="text" class="form-control" id="product_id" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="product_name" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="product_name">
-                    </div>
-                    <div class="mb-3">
-                        <label for="product_image" class="form-label">Product Image</label>
-                        <input type="file" class="form-control" id="product_image">
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Descriptions</label>
-                        <textarea class="form-control" id="description" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="createdDate" class="form-label">CreatedDate</label>
-                        <input type="text" class="form-control" id="createdDate" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="product_price" class="form-label">Product Price</label>
-                        <input type="number" class="form-control" id="product_price">
-                    </div>
-                    <div class="mb-3">
-                        <label for="product_status" class="form-label">Product Status</label>
-                        <select id="product_status">
-                            <option value="true">Bán</option>
-                            <option value="false">Không Bán</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Category</label>
-                        <select id="category">
-                            <option value="1">Quần</option>
-                            <option value="2">Áo</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="addNewCategory()">
-                    UPDATE
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="/js/app.js"></script>
 

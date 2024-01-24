@@ -24,12 +24,16 @@ public class StudentServiceImpl implements IStudentService{
 
     @Override
     public Student findById(Integer id) {
-        return null;
+        return studentDao.findById(id);
     }
 
     @Override
     public void save(StudentRequestDto student) {
         String imageUrl = null;
+        if (student.getStudentId()!=null){
+            // cập nhật
+            imageUrl = studentDao.findById(student.getStudentId()).getImageUrl();
+        }
         if (student.getFile().getSize()!=0){
           imageUrl= uploadService.uploadFileToServer(student.getFile());
         }
@@ -41,6 +45,6 @@ public class StudentServiceImpl implements IStudentService{
 
     @Override
     public void deleteById(Integer id) {
-
+        studentDao.deleteById(id);
     }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -23,6 +24,7 @@ public class Student {
     private String phoneNumber;
     @Column(columnDefinition = "bit")
     private Boolean sex;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(columnDefinition = "date")
     private Date birthday;
     @Column(name="image_url")

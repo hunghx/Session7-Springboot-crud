@@ -12,6 +12,6 @@
         <property name="show_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
         <mapping class="ra.student.model.Student"/>
-        <mapping class="ra.student.model.Category"/>
+<!--        <mapping class="ra.student.model.Category"/>-->
     </session-factory>
 </hibernate-configuration>

@@ -6,7 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import ra.student.dto.request.StudentRequestDto;
+import ra.student.model.Student;
 import ra.student.service.student.IStudentService;
 
 @Controller
@@ -34,6 +36,23 @@ public class AdminController {
     @RequestMapping(value = "/student/add",method = RequestMethod.POST)
     public String doAddStudent(@ModelAttribute StudentRequestDto studentRequestDto){
         studentService.save(studentRequestDto);
+        return "redirect:/admin/student";
+    }
+    @RequestMapping("/student/edit")
+    public String edit(@RequestParam Integer id,Model model){
+        Student studentEdit   = studentService.findById(id);
+        model.addAttribute("student",studentEdit);
+        return "admin/student-edit";
+    }
+    @RequestMapping(value = "/student/update", method = RequestMethod.POST)
+    public String update(@ModelAttribute StudentRequestDto studentRequestDto){
+        studentService.save(studentRequestDto);
+        return "redirect:/admin/student";
+    }
+
+    @RequestMapping("/student/delete")
+    public String delete(@RequestParam Integer id){
+        studentService.deleteById(id);
         return "redirect:/admin/student";
     }
 
