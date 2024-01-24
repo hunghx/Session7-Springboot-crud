@@ -40,6 +40,7 @@ dependencies {
 // https://mvnrepository.com/artifact/org.springframework/spring-orm
     implementation 'org.springframework:spring-orm:6.1.2'
 
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 }
 

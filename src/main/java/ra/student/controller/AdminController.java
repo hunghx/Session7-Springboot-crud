@@ -1,8 +1,11 @@
 package ra.student.controller;
 
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +17,8 @@ import ra.student.service.student.IStudentService;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+    @Autowired
+    private ModelMapper modelMapper;
     @Autowired
     private IStudentService studentService;
     @RequestMapping({"","/dashboard"})
@@ -45,7 +50,15 @@ public class AdminController {
         return "admin/student-edit";
     }
     @RequestMapping(value = "/student/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute StudentRequestDto studentRequestDto){
+    public String update(@Valid @ModelAttribute StudentRequestDto studentRequestDto, BindingResult bindingResult , Model model){
+        // kiểm tra bindingresult có lỗi nào
+
+        if (bindingResult.hasErrors()){
+//            Student student = modelMapper.map(studentRequestDto,Student.class);
+//            student.setImageUrl(studentService.findById(studentRequestDto.getStudentId()).getImageUrl());
+            model.addAttribute("student",studentRequestDto);
+            return "admin/student-edit";
+        }
         studentService.save(studentRequestDto);
         return "redirect:/admin/student";
     }

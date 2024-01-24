@@ -290,7 +290,7 @@
                                 <td th:text="${stu.sex?'Nam':'Nữ'}"></td>
                                 <td th:text="${stu.phoneNumber}"></td>
                                 <td th:text="${stu.address}"></td>
-                                <td><a href="" class="btn btn-warning">EDIT</a></td>
+                                <td><a th:href="|/admin/student/edit?id=${stu.studentId}|" class="btn btn-warning">EDIT</a></td>
                                 <td><a th:href="|/admin/student/delete?id=${stu.studentId}|" onclick="return confirm('bạn có chắc chắn muốn xóa không ?')" class="btn btn-danger">DELETE</a></td>
                             </tr>
                             </tbody>
